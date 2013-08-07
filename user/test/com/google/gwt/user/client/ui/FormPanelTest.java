@@ -16,18 +16,12 @@
 package com.google.gwt.user.client.ui;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.ButtonElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.FormElement;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.junit.DoNotRunWith;
 import com.google.gwt.junit.Platform;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FormPanel.ResetEvent;
 import com.google.gwt.user.client.ui.FormPanel.ResetHandler;
@@ -214,8 +208,8 @@ public class FormPanelTest extends SimplePanelTestBase<FormPanel> {
     assertEquals("", textBox.getText());
     RootPanel.get().remove(form);
   }
-  
-  public void testResetNative() { 
+
+  public void testResetNative() {
     FormPanel form = new FormPanel();
     RootPanel.get().add(form);
     TextBox textBox = new TextBox();
@@ -226,82 +220,49 @@ public class FormPanelTest extends SimplePanelTestBase<FormPanel> {
     assertEquals("", textBox.getText());
     RootPanel.get().remove(form);
   }
-  
+
   public void testResetEvent() {
-    
-    /*
-     * the form reset event handler is tested by reseting a checkbox
-     * which is not inside the scope of the actual form, but should 
-     * still be reseted. Thus, the reset is performed when the reset
-     * event is triggered.
-     */
-    
+
+    // The form reset event handler is tested by by changing a boolean
+
     FormPanel form = new FormPanel();
     RootPanel.get().add(form);
-    TextBox textBox = new TextBox();
-    textBox.setText("Hello World");
-    form.setWidget(textBox);
-    
-  
-    /*
-     *  the following checkbox is not added to the form on purpose
-     *  in order to reset it via callback
-     */
-    final CheckBox checkBox = new CheckBox();
-    checkBox.setValue(true);
-    
-    /*
-     * 1. first test shall not affect the checkbox
-     */
-    
-    // check preconditions
-    assertEquals("Hello World", textBox.getText());
-    assertTrue(checkBox.getValue());
-    form.reset();
-    // check postconditions
-    assertEquals("", textBox.getText());
-    assertTrue(checkBox.getValue());
-    
-    /*
-     * 2. second test shall affect the checkbox,
-     * to this end a ResetHandler is added to to FormPanel which is called on a ResetEvent 
-     */
+
+    // this boolean should be changed by the reset handler
+    final boolean[] resetInvoked = new boolean[1];
+
+    // to this end a ResetHandler is added to to FormPanel which is called on a ResetEvent
     HandlerRegistration handlerRegistration = form.addResetHandler(new ResetHandler() {
-      
+
       @Override
       public void onReset(ResetEvent event) {
-        checkBox.setValue(false);
+        resetInvoked[0] = true;
       }
     });
-        
-    // init preconditions
-    textBox.setText("Hello World");
+
     // check preconditions
-    assertEquals("Hello World", textBox.getText());
-    assertTrue(checkBox.getValue());
-    form.reset(); // does not trigger the reset event from the test case, 
+    assertFalse(resetInvoked[0]);
+    form.reset(); // does not trigger the reset event from the test case,
     // thus calling the event handler manually:
     invokeNativeFormResetHandler(form.getElement());
     // check postconditions
-    assertEquals("", textBox.getText());
-    assertFalse(checkBox.getValue());
-    
+    assertTrue(resetInvoked[0]);
+
     /*
-     * 3. third test shall not affect the checkbox,
-     * to this end the ResetHandler is removed from the FormPanel 
+     * after removing the ResetHandler from the FormPanel,
+     * resetInvoked[0] should not be affected
      */
+
     handlerRegistration.removeHandler();
     // init preconditions
-    textBox.setText("Hello World");
-    checkBox.setValue(true);
+    resetInvoked[0] = false;
     // check preconditions
-    assertEquals("Hello World", textBox.getText());
-    assertTrue(checkBox.getValue());
+    assertFalse(resetInvoked[0]);
     form.reset();
+    invokeNativeFormResetHandler(form.getElement());
     // check postconditions
-    assertEquals("", textBox.getText());
-    assertTrue(checkBox.getValue());
-    
+    assertFalse(resetInvoked[0]);
+
     RootPanel.get().remove(form);
   }
 
@@ -453,12 +414,12 @@ public class FormPanelTest extends SimplePanelTestBase<FormPanel> {
   private native boolean isHappyDivPresent(Element iframe) /*-{
     return !!iframe.contentWindow.document.getElementById(':)');
   }-*/;
-  
-  private static native void nativeFormReset(Element form)/*-{
+
+  private static native void nativeFormReset(Element form) /*-{
     form.reset();
   }-*/;
 
-  private static native void invokeNativeFormResetHandler(Element form)/*-{
+  private static native void invokeNativeFormResetHandler(Element form) /*-{
     form.onreset();
   }-*/;
 

@@ -46,11 +46,11 @@ public class FormPanelImplIE6 extends FormPanelImpl {
         iframe.__formAction = form.action;
       return listener.@com.google.gwt.user.client.ui.impl.FormPanelImplHost::onFormSubmit()();
     });
-    
-    form.onreset = $entry(function() {    
+
+    form.onreset = $entry(function() {
       listener.@com.google.gwt.user.client.ui.impl.FormPanelImplHost::onFormReset()();
     });
-    
+
   }-*/;
 
   @Override

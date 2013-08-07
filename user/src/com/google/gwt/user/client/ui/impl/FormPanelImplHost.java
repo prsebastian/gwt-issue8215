@@ -22,10 +22,10 @@ package com.google.gwt.user.client.ui.impl;
 public interface FormPanelImplHost {
 
   /**
-   * Called when the form is reseted.
+   * Called when the form is reset.
    */
   void onFormReset();
-  
+
   /**
    * Called when the form is submitted.
    * 

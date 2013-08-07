@@ -63,9 +63,9 @@ import com.google.gwt.user.client.ui.impl.FormPanelImplHost;
  */
 @SuppressWarnings("deprecation")
 public class FormPanel extends SimplePanel implements FiresFormEvents, FormPanelImplHost {
-  
+
   /**
-   * Fired when the form is reseted.
+   * Fired when the form is reset.
    */
   public static class ResetEvent extends GwtEvent<ResetHandler> {
     /**
@@ -101,13 +101,13 @@ public class FormPanel extends SimplePanel implements FiresFormEvents, FormPanel
    */
   public interface ResetHandler extends EventHandler {
     /**
-     * Fired when the form is reseted.
-     *     
+     * Fired when the form is reset.
+     *
      * @param event the event
      */
     void onReset(FormPanel.ResetEvent event);
   }
-  
+
   /**
    * Fired when a form has been submitted successfully.
    */
@@ -475,7 +475,7 @@ public class FormPanel extends SimplePanel implements FiresFormEvents, FormPanel
   public HandlerRegistration addResetHandler(ResetHandler handler) {
     return addHandler(handler, ResetEvent.getType());
   }
-  
+
   /**
    * Adds a {@link SubmitCompleteEvent} handler.
    *
@@ -538,10 +538,10 @@ public class FormPanel extends SimplePanel implements FiresFormEvents, FormPanel
   }
 
   @Override
-  public void onFormReset() {   
-    fireResetEvent();
+  public void onFormReset() {
+    fireEvent(new FormPanel.ResetEvent());
   }
-  
+
   /**
    * Fired when a form is submitted.
    *
@@ -677,14 +677,6 @@ public class FormPanel extends SimplePanel implements FiresFormEvents, FormPanel
     synthesizedFrame = dummy.getFirstChildElement();
   }
 
-  /**
-   * Fire a {@link FormPanel.SubmitEvent}.
-   */
-  private void fireResetEvent() {
-    FormPanel.ResetEvent event = new FormPanel.ResetEvent();
-    fireEvent(event);
-  }
-  
   /**
    * Fire a {@link FormPanel.SubmitEvent}.
    *
